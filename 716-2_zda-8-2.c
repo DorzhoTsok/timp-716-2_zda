@@ -1,119 +1,74 @@
-#include <stdio.h>
+nclude <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
-typedef struct
+void siftDown(int *n, int root, int b,int *sr,int *p)
 {
-    int n;
-    int* arr;
-} heap;
-
-int parent_index( int id )
-{
-    if( id == 0 )
-        return -1;
+  int max; // индекс максимального потомка
+  int done = 0; 
+  while ((root * 2 <= b) && (!done)) 
+  {
+    if (root * 2 == b)     
+      max = root * 2;    
+    else if (n[root * 2] > n[root * 2 + 1])
+      max = root * 2;
     else
-        return (id%2) ? (id/2) : (--id/2);
-}
-
-int child_index( int id )
-{
-    return 2*id + 1;
-}
-
-void swap( int* a, int* b )
-{
-    int t = *a;
-    *a = *b;
-    *b = t;
-}
-
-void bubble_up( heap* h, int p )
-{
-    int p_p = parent_index( p );
-
-    if( p_p == -1 ) return;
-    if( h->arr[p_p] > h->arr[p] )
-    {
-        swap( &h->arr[p_p], &h->arr[p] );
-        bubble_up( h, p_p );
+      max = root * 2 + 1;
+   
+    if (n[root] < n[max]) 
+    {(*sr++);
+      int temp = n[root]; // меняем их местами
+      n[root] = n[max];
+      n[max] = temp;
+      root = max;(*p)++;
     }
+    else{(*sr++);
+ 
+      done = 1;} // пирамида сформирована
+  }
 }
-
-void h_insert( heap* h, int x )
+// Функция сортировки 
+void heapSort(int *n, int array_size,int *sr,int *p) 
 {
-    if( h->n == 0 )
-    {
-        h->arr = (int*) malloc( sizeof(int)*(++h->n) );
-    }
-    else
-    {
-        h->arr = (int*) realloc( h->arr, sizeof(int)*(++h->n) );
-    }
-    h->arr[h->n-1] = x;
-
-    bubble_up( h, h->n-1 );
+ 
+  for (int i = (array_size / 2) - 1; i >= 0; i--)
+    siftDown(n, i, array_size,sr,p);
+  
+  for (int i = array_size - 1; i >= 1; i--)
+  {
+    int temp = n[0];
+    n[0] = n[i];
+    n[i] = temp;
+    siftDown(n, 0, i - 1,sr,p);
+  }
 }
-
-void bubble_down( heap* h, int p )
-{
-    int c_p = child_index( p ), min_index = p, i;
-
-    for( i = 0; i<=1; i++ )
-    {
-        if( c_p+i < h->n && h->arr[c_p+i] < h->arr[min_index] ) min_index = c_p+i;
-    }
-
-    if( min_index != p )
-    {
-        swap( &h->arr[p], &h->arr[min_index] );
-        bubble_down( h, min_index );
-    }
-}
-
-void extract_min( heap* h )
-{
-    if( h->n > 0 )
-    {
-        swap( &h->arr[0], &h->arr[h->n-1] );
-        h->n--;
-        bubble_down( h, 0 );
-    }
-}
-
 int main()
 {
-    srand( time(NULL) );
+  int *a;
+    int sr,p,n;
+     scanf("%d",&n);
+double srSr=0,srPr=0;
+ for(int ch=0;ch<100;ch++){
+        sr=0,p=0;
+        a  =  (int *)calloc(n, sizeof(int));
 
-    heap h;
-
-    h.n = 0;
-    h.arr = NULL;
-
-    int i, x;
-
-    int n;
-    printf( "n = " ); scanf( "%d", &n );
-
-    for( i = 0; i < n; i++ )
+    for (int i = 0;i<n;i++)
     {
-        //scanf( "%d", &x );
-        x = rand()%50;
-        h_insert( &h, x );
+        a[i]=rand()%(2*n)+1; 
     }
+  heapSort(a,n,&sr,&p); // вызов функции сортировки
+  // Вывод элементов массива после сортировки
+for(int i=0;i<n;i++){ printf("%d ", a[i]); }//отсортированный массив
+printf("\n");
+printf("Sravneniy: %d\n",sr);
+printf("Perestanovok: %d\n",p);
+srSr+=sr;
+srPr+=p;
+free(a);
+}
+srSr=srSr/100;
+srPr=srPr/100;
 
-    while( h.n > 0 )
-    {
-        extract_min( &h );
-    }
-
-    for( i = 0; i < n; i++ )
-    {
-        printf( "%d ", h.arr[i] );
-    }
-
-    printf( "\n" );
-    free( h.arr );
-
-	return 0;
+printf("Srednee Sravn: %.2f\n",srSr);
+printf("Srednee Perest: %.2f\n",srPr);
+return 0        ;
 }
