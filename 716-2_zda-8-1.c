@@ -1,92 +1,69 @@
-#include <stdio.h>
+nclude <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-
-void swap( int* a, int* b )
+// Функция быстрой сортировки
+void quickSort(int *n, int left, int right,int *sr,int *p)
 {
-    int t = *a;
-    *a = *b;
-    *b = t;
-}
+  int pp; 
+  int l_hold = left; //левая граница
+  int r_hold = right; // правая граница
+  pp = n[left];
+  while (left < right) // пока границы не сомкнутся
 
-int get_pivot( int* A, int lo, int hi )
-{
-    return A[lo];
-}
+  {(*sr)++;
+    while ((n[right] >= pp) && (left < right))
+      right--;
 
-int partition( int* A, int lo, int hi )
-{
-    int pivot = A[lo];
-    int i = lo - 1;
-    int j = hi + 1;
-    while( 1 )
+    if (left != right) 
     {
-        do
-        {
-            i++;
-        } while( A[i] < pivot );
-
-        do
-        {
-            j--;
-        } while( A[j] > pivot );
-
-        if( i >= j ) return j;
-
-        swap( &A[i], &A[j] );
+      n[left] = n[right];(*p)++;  
+      left++;  
     }
-}
-
-
-void quicksort( int* A, int lo, int hi )
-{
-    if( lo < hi )
-    {
-        int p = partition( A, lo, hi );
-        quicksort( A, lo, p );
-        quicksort( A, p+1, hi );
+    while ((n[left] <= pp) && (left < right))
+      left++;
+    if (left != right) // если границы не сомкнулись
+    { 
+      n[right] = n[left]; // перемещаем элемент [left] на место [right]
+      right--;(*p)++;  // сдвигаем правую границу вправо 
     }
+  }
+  n[left] = pp; 
+  pp = left;
+  left = l_hold;
+  right = r_hold;
+  if (left <pp) // Рекурсивно вызываем сортировку для левой и правой части массива
+  {
+  quickSort(n, left, pp - 1,sr,p);}
+  if (right > pp){
+    quickSort(n, pp + 1, right,sr,p);}
 }
-
 int main()
 {
-    srand( time(NULL) );
+  int *a;
+    int sr,p,n;
+     scanf("%d",&n);
+double srSr=0,srPr=0;
+//        for(int ch=0;ch<100;ch++){
+	sr=0,p=0; 
+	a  =  (int *)calloc(n, sizeof(int));
 
-    int* A = NULL;
-
-    int n, i;
-    printf( "n = " ); scanf( "%d", &n );
-
-    A = (int*) malloc( sizeof(int)*n );
-
-    for( i = 0; i < n; i++ )
+    for (int i = 0;i<n;i++)
     {
-        //scanf( "%d", &x );
-        A[i] = rand()%50;
-        printf( "%d ", A[i] );
+        a[i]=i+1;
     }
-    printf( "\n" );
+  quickSort(a,0,n,&sr,&p); // вызов функции сортировки
+  // Вывод элементов массива после сортировки
+for(int i=0;i<n;i++){ printf("%d ", a[i]); }//отсортированный массив
+printf("\n");
+printf("Sravneniy: %d\n",sr);
+printf("Perestanovok: %d\n",p);
+srSr+=sr;
+srPr+=p;
+free(a);
+//}
+srSr=srSr/100;
+srPr=srPr/100;
 
-    quicksort( A, 0, n-1 );
-
-    for( i = 0; i < n; i++ )
-    {
-        //scanf( "%d", &x );
-        printf( "%d ", A[i] );
-    }
-    printf( "\n" );
-
-    for( i = 0; i < n-1; i++ )
-    {
-        //scanf( "%d", &x );
-        if( A[i+1] < A[i] )
-        {
-            printf( "NO!" );
-            break;
-        }
-    }
-
-    free( A );
-
-    return 0;
+//printf("Srednee Sravn: %.2f\n",srSr);
+//printf("Srednee Perest: %.2f\n",srPr);
+return 0        ;
 }
